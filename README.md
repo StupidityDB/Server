@@ -17,8 +17,8 @@ poetry install --only main
 
 ## Pre Run
 
-Before running the server, you will need to edit the a `config.json5` file in the `stupidity_db_server`
-directory.
+Before running the server, you will need to edit the a `config.example.json5` file in the `stupidity_db_server`
+directory (Also rename it to `config.json5`.).
 
 ## Running
 
