@@ -80,4 +80,5 @@ async def vote_for_user_stupidity(
     return ORJSONResponse({"old": None, "new": rating})
 
 
-uvicorn.run(app, host="127.0.0.1")
+def __main__():
+    uvicorn.run(app, host="127.0.0.1")
