@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "stupidity-db-server"
+version = "0.0.1"
+description = "No brain wrinkles?"
+authors = [ "StupidityDB Development Team" ]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = { version = "*", extras = [ "all" ] }
+json5 = "*"
+
+[tool.poetry.dev-dependencies]
+pyright = "*"
+
+[tool.poetry.scripts]
+bot = "stupidity_db_server.__main__:__main__"
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+reportMissingModuleSource = "error"
+reportAssertAlwaysTrue = "error"
+reportInvalidStringEscapeSequence = "error"
+reportInvalidTypeVarUse = "error"
+reportSelfClsParameterName = "error"
+reportUnsupportedDunderAll = "error"
+reportUnusedExpression = "error"
+reportWildcardImportFromLibrary = "error"
+reportConstantRedefinition = "error"
+reportDuplicateImport = "error"
+reportFunctionMemberAccess = "error"
+reportImportCycles = "error"
+reportIncompatibleVariableOverride = "error"
+reportIncompleteStub = "error"
+reportInconsistentConstructor = "error"
+reportInvalidStubStatement = "error"
+reportMatchNotExhaustive = "error"
+reportMissingParameterType = "error"
+reportTypeCommentUsage = "error"
+reportUnnecessaryCast = "error"
+reportUnnecessaryComparison = "error"
+reportUnnecessaryIsInstance = "error"
+reportUnusedClass = "error"
+reportUnusedVariable = "error"
+reportUntypedBaseClass = "error"
+reportUntypedClassDecorator = "error"
+reportUntypedFunctionDecorator = "error"
+reportUntypedNamedTuple = "error"
+reportCallInDefaultInitializer = "error"
+reportPropertyTypeMismatch = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
