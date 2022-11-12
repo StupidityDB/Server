@@ -3,6 +3,7 @@ __all__ = ("router",)
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
+
 from ..depends import oauth2
 
 router = APIRouter(

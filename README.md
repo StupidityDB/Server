@@ -1,7 +1,7 @@
 # StupidityDB Server
 
-This is the server for the StupidityDB project. It is a simple HTTP server that serves data
-from a PostGreSQL database.
+This is the server for the StupidityDB project. It is a simple HTTP server that serves data from a
+PostGreSQL database.
 
 ## Installation
 
