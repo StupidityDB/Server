@@ -7,8 +7,8 @@ from fastapi_discord import User
 from fastapi_limiter.depends import RateLimiter
 
 from ....annotations import UserId
-from ....util import generate_example
 from ....depends import get_db, oauth2
+from ....util import generate_example
 
 router = APIRouter(
     tags=["Stupidity"]
@@ -32,16 +32,15 @@ async def get_user_stupidity(
     db: PGConnection = Depends(get_db),
     target_id: int = UserId
 ) -> ORJSONResponse:
-    average_stupidity, total_votes = await db.fetch(
-        "SELECT AVG(rating) AS average, COUNT(*) AS count FROM stupidity WHERE rated = $1",
+    result = await db.fetch(
+        "SELECT AVG(rating) AS average, COUNT(*) AS total FROM stupidity WHERE rated = $1",
         target_id
     )
-    print(average_stupidity)
 
     return ORJSONResponse(
         {
-            "average_stupidity": average_stupidity,
-            "total_votes": total_votes
+            "average_stupidity": result[0]["average"],
+            "total_votes": result[0]["total"]
         }
     )
 
