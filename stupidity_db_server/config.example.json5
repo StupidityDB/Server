@@ -1,6 +1,7 @@
 {
-    MONGO_URI: "mongodb://localhost:27017/your-database-name",
-    CLIENT_ID: 00000000000000000,
-    CLIENT_SECRET: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    REDIRECT_URI: "https://google.com/",
+    CLIENT_ID: 0,
+    CLIENT_SECRET: "",
+    REDIRECT_URI: "",
+    DB_USER: "",
+    DB_PASSWORD: "",
 }
