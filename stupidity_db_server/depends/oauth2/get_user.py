@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from fastapi import Depends
 
-from ._get_oauth2 import _get_oauth2
+from .get_oauth2 import get_oauth2
 
 if TYPE_CHECKING:
     from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client, User as DiscordUser
@@ -14,6 +14,6 @@ if TYPE_CHECKING:
 
 
 async def get_user(
-    request: Request, oauth2: DiscordOAuth2Client = Depends(_get_oauth2)
+    request: Request, oauth2: DiscordOAuth2Client = Depends(get_oauth2)
 ) -> DiscordUser:
     return await oauth2.user(request)
