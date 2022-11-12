@@ -40,7 +40,7 @@ class StupidAPI(FastAPI):
         self.db = await connect_to_postgres(
             user="stupidity_db_user",
             password="stupidity_db_password",
-            database="StupidityDB",
+            database="stupidity_db",
             host="127.0.0.1",
         )
         await FastAPILimiter.init(self.redis)
