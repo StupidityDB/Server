@@ -30,7 +30,6 @@ class StupidAPI(FastAPI):
             description="A stupid(ity) database.",
             version="0.0.1",
             default_response_class=ORJSONResponse,
-            docs_url="/documentation",
             redoc_url=None
         )
         self.add_event_handler("startup", self.on_start)
