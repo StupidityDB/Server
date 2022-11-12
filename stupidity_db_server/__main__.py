@@ -4,4 +4,6 @@ from uvicorn import run as run_app
 
 from . import StupidAPI
 
-run_app(StupidAPI())
+
+def __main__() -> None:
+    run_app(StupidAPI())

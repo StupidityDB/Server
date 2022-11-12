@@ -1,15 +1,17 @@
 __all__ = ("generate_example",)
 
-from fastapi import status
+from fastapi import status as http_status
 from typing import Any
 
 
-def generate_example(example: Any) -> dict[int, dict[str, dict[str, dict[str, Any]]]]:
+def generate_example(
+    example: Any, /, *, status: int = http_status.HTTP_200_OK, html: bool = False
+) -> dict[int, dict[str, dict[str, dict[str, Any]]]]:
     return {
-        status.HTTP_200_OK: {
+        status: {
             "description": "A users average stupidity and total vote count.",
             "content": {
-                "application/json": {
+                "text/html" if html else "application/json": {
                     "example": example
                 }
             }

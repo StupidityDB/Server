@@ -10,21 +10,21 @@ from ..util import generate_example
 
 router = APIRouter(
     prefix="/authorize",
-    tags=["Authorize"],
+    tags=["Authorization"]
 )
 
 
 @router.get(
     "/",
-    summary="Link your Discord account.",
-    description="Link your Discord account.",
+    summary="Authorize with Discord.",
+    description="This endpoint will redirect you to Discord's OAuth2 authorization page.",
     response_description="Redirect to the Discord OAuth2 authorization page.",
     status_code=status.HTTP_307_TEMPORARY_REDIRECT,
-    response_class=RedirectResponse,
+    response_class=RedirectResponse
 )
 async def authorize(
     *,
-    oauth2_: DiscordOAuth2Client = Depends(oauth2.get_oauth2),
+    oauth2_: DiscordOAuth2Client = Depends(oauth2.get_oauth2)
 ) -> RedirectResponse:
     return RedirectResponse(oauth2_.oauth_login_url)
 
@@ -32,24 +32,25 @@ async def authorize(
 @router.get(
     "/success",
     summary="Success page after linking your Discord account.",
-    description="Success page after linking your Discord account.",
-    response_description="The success page after linking your Discord account.",
+    description="This endpoint says that you have successfully linked your Discord account.",
+    response_description="Success page after linking your Discord account.",
     response_class=HTMLResponse,
     responses=generate_example(
         cleandoc(
             """
             <h1>Success!</h1>
-            <p>You are now authorized.</p>
+            <p>You are have authorized StupidityDB successsfully.</p>
             """
-        )
-    ),
+        ),
+        html=True
+    )
 )
 async def authorize_success() -> HTMLResponse:
     return HTMLResponse(
         cleandoc(
             """
             <h1>Success!</h1>
-            <p>You are now authorized.</p>
+            <p>You are have authorized StupidityDB successsfully.</p>
             """
         )
     )

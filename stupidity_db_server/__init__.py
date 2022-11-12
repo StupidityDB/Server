@@ -21,7 +21,7 @@ class StupidAPI(FastAPI):
     oauth2 = DiscordOAuth2Client(
         client_id=config["CLIENT_ID"],
         client_secret=config["CLIENT_SECRET"],
-        redirect_uri=config["REDIRECT_URI"],
+        redirect_uri=config["REDIRECT_URI"]
     )
 
     def __init__(self) -> None:
@@ -31,7 +31,7 @@ class StupidAPI(FastAPI):
             version="0.0.1",
             default_response_class=ORJSONResponse,
             docs_url="/documentation",
-            redoc_url=None,
+            redoc_url=None
         )
         self.add_event_handler("startup", self.on_start)
         self.include_router(api_router)
@@ -41,7 +41,7 @@ class StupidAPI(FastAPI):
             user="stupidity_db_user",
             password="stupidity_db_password",
             database="stupidity_db",
-            host="127.0.0.1",
+            host="127.0.0.1"
         )
         await FastAPILimiter.init(self.redis)
         await self.oauth2.init()
