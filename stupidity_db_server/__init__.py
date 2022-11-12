@@ -5,8 +5,8 @@ __all__ = ("StupidAPI",)
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from aioredis import Redis
-from asyncpg import connect as connect_pg
+from aioredis import Redis as RedisConnection
+from asyncpg import connect as connect_to_postgres
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
@@ -23,7 +23,7 @@ config = decode_json5((Path(__file__).parent / "config.json5").read_text())
 
 class StupidAPI(FastAPI):
     db: PGConnection = None
-    redis = Redis.from_url("redis://localhost:6379", decode_responses=True)
+    redis = RedisConnection.from_url("redis://localhost:6379", decode_responses=True)
     oauth2 = DiscordOAuth2Client(
         client_id=config["CLIENT_ID"],
         client_secret=config["CLIENT_SECRET"],
@@ -37,13 +37,13 @@ class StupidAPI(FastAPI):
             version="0.0.1",
             default_response_class=ORJSONResponse,
             docs_url=None,
-            redoc_url="/docs",
+            redoc_url="/documentation",
         )
         self.add_event_handler("startup", self.on_start)
         self.include_router(api_router)
 
     async def on_start(self) -> None:
-        self.db = await connect_pg(
+        self.db = await connect_to_postgres(
             user=config["DB_USER"],
             password=config["DB_PASSWORD"],
             database="StupidityDB",
