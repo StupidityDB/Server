@@ -33,7 +33,7 @@ class StupidAPI(FastAPI):
     def __init__(self) -> None:
         super().__init__(
             title="StupidityDB",
-            description="A stupid database.",
+            description="A stupid(ity) database.",
             version="0.0.1",
             default_response_class=ORJSONResponse,
             docs_url=None,
