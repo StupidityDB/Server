@@ -16,14 +16,13 @@ from json5 import loads as decode_json5
 from .routes import router as api_router
 
 if TYPE_CHECKING:
-    from aioredis import Redis
     from asyncpg import Connection as PGConnection
 
 config = decode_json5((Path(__file__).parent / "config.json5").read_text())
 
 
 class StupidAPI(FastAPI):
-    db: PGConnection
+    db: PGConnection = None
     redis = Redis.from_url("redis://localhost:6379", decode_responses=True)
     oauth2 = DiscordOAuth2Client(
         client_id=config["CLIENT_ID"],
