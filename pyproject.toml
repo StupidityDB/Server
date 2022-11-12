@@ -2,13 +2,13 @@
 name = "stupidity-db-server"
 version = "0.0.1"
 description = "No brain wrinkles?"
-authors = [ "StupidityDB Development Team" ]
+authors = ["StupidityDB Development Team"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-motor = "*"
+asyncpg = "*"
 aioredis = "*"
-fastapi = { version = "*", extras = [ "all" ] }
+fastapi = { version = "*", extras = ["all"] }
 fastapi-discord = "*"
 fastapi-limiter = "*"
 json5 = "*"
