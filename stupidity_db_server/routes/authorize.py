@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
 
 from ..depends import oauth2
+from ..util import generate_example
 
 router = APIRouter(
     prefix="/authorize",
@@ -34,6 +35,14 @@ async def authorize(
     description="Success page after linking your Discord account.",
     response_description="The success page after linking your Discord account.",
     response_class=HTMLResponse,
+    responses=generate_example(
+        cleandoc(
+            """
+            <h1>Success!</h1>
+            <p>You are now authorized.</p>
+            """
+        )
+    ),
 )
 async def authorize_success() -> HTMLResponse:
     return HTMLResponse(

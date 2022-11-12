@@ -6,9 +6,9 @@ from fastapi.responses import ORJSONResponse
 from fastapi_discord import User
 from fastapi_limiter.depends import RateLimiter
 
-from stupidity_db_server.annotations import UserId
+from ....annotations import UserId
 from ....util import generate_example
-from stupidity_db_server.depends import get_db, oauth2
+from ....depends import get_db, oauth2
 
 router = APIRouter(
     prefix="/stupidity",
@@ -26,7 +26,7 @@ router = APIRouter(
             "average-stupidity": 36.7,
             "total-votes": 356,
         }
-    )
+    ),
 )
 async def get_user_stupidity(
     *,
@@ -59,6 +59,12 @@ async def get_user_stupidity(
         Depends(RateLimiter(times=5, minutes=1)),
     ],
     status_code=status.HTTP_201_CREATED,
+    responses=generate_example(
+        {
+            "old-rating": 69,
+            "new-rating": 31,
+        }
+    ),
 )
 async def vote_for_user_stupidity(
     *,
@@ -110,6 +116,12 @@ async def vote_for_user_stupidity(
         Depends(oauth2.requires_authentication),
         Depends(RateLimiter(times=5, minutes=1)),
     ],
+    responses=generate_example(
+        {
+            "successfully-deleted": True,
+            "old-rating": 31,
+        }
+    )
 )
 async def remove_user_stupidity_vote(
     db: PGConnection = Depends(get_db),
