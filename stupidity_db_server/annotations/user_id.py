@@ -4,6 +4,6 @@ from fastapi import Path
 
 UserId = Path(
     alias="user-id",
-    title="The user's Discord ID",
+    description="The user's Discord ID.",
     example=512640455834337290,
 )

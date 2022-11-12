@@ -5,4 +5,4 @@ from fastapi import Request
 
 
 def get_db(request: Request) -> PGConnection:
-    return request.app.state.db
+    return request.app.db

@@ -5,4 +5,4 @@ from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
 
 
 def get_oauth2(request: Request) -> DiscordOAuth2Client:
-    return request.app.state.oauth2
+    return request.app.oauth2

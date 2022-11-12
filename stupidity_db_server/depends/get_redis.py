@@ -5,4 +5,4 @@ from fastapi import Request
 
 
 def get_redis(request: Request) -> RedisConnection:
-    return request.app.state.redis
+    return request.app.redis

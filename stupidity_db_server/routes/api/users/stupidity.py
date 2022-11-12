@@ -7,11 +7,12 @@ from fastapi_discord import User
 from fastapi_limiter.depends import RateLimiter
 
 from stupidity_db_server.annotations import UserId
+from ....util import generate_example
 from stupidity_db_server.depends import get_db, oauth2
 
 router = APIRouter(
     prefix="/stupidity",
-    tags=["stupidity"],
+    tags=["Stupidity"],
 )
 
 
@@ -19,16 +20,22 @@ router = APIRouter(
     "/",
     summary="Get a users average stupidity.",
     description="Get a users average stupidity. Also returns the total vote count.",
-    response_description="A users average stupidity and total vote count.",
+    response_description="The users average stupidity and total vote count.",
+    responses=generate_example(
+        {
+            "average-stupidity": 36.7,
+            "total-votes": 356,
+        }
+    )
 )
 async def get_user_stupidity(
     *,
     db: PGConnection = Depends(get_db),
-    user_id: int = UserId
+    target_id: int = UserId
 ) -> ORJSONResponse:
     average_stupidity, total_votes = await db.fetch(
         "SELECT AVG(rating) AS average, COUNT(*) AS count FROM stupidity WHERE rated = $1",
-        user_id
+        target_id
     )
 
     return ORJSONResponse(
@@ -51,7 +58,7 @@ async def get_user_stupidity(
         Depends(oauth2.requires_authentication),
         Depends(RateLimiter(times=5, minutes=1)),
     ],
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 async def vote_for_user_stupidity(
     *,
@@ -60,8 +67,10 @@ async def vote_for_user_stupidity(
     target_id: int = UserId,
     rating: int = Body(
         description="The rating to rate the user's stupidity.",
+        example=69,
+        embed=True,
         ge=0,
-        le=100
+        le=100,
     ),
 ) -> ORJSONResponse:
     old_rating = await db.fetchval(
@@ -100,7 +109,7 @@ async def vote_for_user_stupidity(
     dependencies=[
         Depends(oauth2.requires_authentication),
         Depends(RateLimiter(times=5, minutes=1)),
-    ]
+    ],
 )
 async def remove_user_stupidity_vote(
     db: PGConnection = Depends(get_db),
