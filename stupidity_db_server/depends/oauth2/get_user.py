@@ -7,6 +7,6 @@ from .get_oauth2 import get_oauth2
 
 
 async def get_user(
-    request: Request, oauth2: DiscordOAuth2Client = Depends(get_oauth2)
+    *, request: Request, oauth2: DiscordOAuth2Client = Depends(get_oauth2)
 ) -> DiscordUser:
     return await oauth2.user(request)

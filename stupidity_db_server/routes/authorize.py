@@ -1,7 +1,8 @@
 __all__ = ("router",)
 
-from fastapi import APIRouter, Depends, status
 from inspect import cleandoc
+
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
 

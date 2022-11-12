@@ -1,7 +1,8 @@
 __all__ = ("generate_example",)
 
-from fastapi import status as http_status
 from typing import Any
+
+from fastapi import status as http_status
 
 
 def generate_example(

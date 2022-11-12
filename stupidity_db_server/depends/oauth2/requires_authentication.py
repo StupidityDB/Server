@@ -8,6 +8,7 @@ from .get_oauth2 import get_oauth2
 
 
 async def requires_authentication(
+    *,
     oauth2: DiscordOAuth2Client = Depends(get_oauth2),
     bearer: HTTPAuthorizationCredentials | None = Depends(HTTPBearer())
 ) -> DiscordUser:

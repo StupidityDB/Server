@@ -4,5 +4,5 @@ from asyncpg import Connection as PGConnection
 from fastapi import Request
 
 
-def get_db(request: Request) -> PGConnection:
+def get_db(*, request: Request) -> PGConnection:
     return request.app.db

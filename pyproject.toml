@@ -10,7 +10,7 @@ asyncpg = "*"
 aioredis = "*"
 fastapi = { version = "*", extras = ["all"] }
 fastapi-discord = "*"
-fastapi-limiter = "*"
+fastapi-limiter = { git = "https://github.com/RGBCube/fastapi-limiter.git" }
 json5 = "*"
 
 [tool.poetry.dev-dependencies]

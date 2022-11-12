@@ -218,15 +218,22 @@ fastapi = "0.85.0"
 
 [[package]]
 name = "fastapi-limiter"
-version = "0.1.4"
+version = "0.1.5"
 description = "A request rate limiter for fastapi"
 category = "main"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = "^3.7"
+develop = false
 
 [package.dependencies]
-aioredis = "*"
 fastapi = "*"
+redis = "^4.2.0rc1"
+
+[package.source]
+type = "git"
+url = "https://github.com/RGBCube/fastapi-limiter.git"
+reference = "HEAD"
+resolved_reference = "9f590ce2f30855a765cdc7af88455e13d9854a12"
 
 [[package]]
 name = "frozenlist"
@@ -392,6 +399,21 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "redis"
+version = "4.4.0rc4"
+description = "Python client for Redis database and key-value store"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+async-timeout = ">=4.0.2"
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -550,7 +572,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "4f0a293ddbf6b08a8dcd662ced9e7ec10f9b3c12928e7b61dad40629b1fc0506"
+content-hash = "0656d6d701002735b630f251b6f2398480a06286bda860087b7c144f937820aa"
 
 [metadata.files]
 aiocache = [
@@ -735,10 +757,7 @@ fastapi = [
 fastapi-discord = [
     { file = "fastapi_discord-0.2.4-py3-none-any.whl", hash = "sha256:75855d9839cc903b4eaf5de42ac8b0e29f8339ed1b617b34cc137082ce76a7ed" },
 ]
-fastapi-limiter = [
-    { file = "fastapi-limiter-0.1.4.tar.gz", hash = "sha256:50e85960de165f87a801ea742b94c7fc43ff2567d790da2892ad2cbc3c41fa58" },
-    { file = "fastapi_limiter-0.1.4-py3-none-any.whl", hash = "sha256:fc0ab9fd3313782fdf21dcabe63de84413b546c13c66b3a14c4c8742f97ee81c" },
-]
+fastapi-limiter = []
 frozenlist = [
     { file = "frozenlist-1.3.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:ff8bf625fe85e119553b5383ba0fb6aa3d0ec2ae980295aaefa552374926b3f4" },
     { file = "frozenlist-1.3.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:dfbac4c2dfcc082fcf8d942d1e49b6aa0766c19d3358bd86e2000bf0fa4a9cf0" },
@@ -1126,6 +1145,10 @@ pyyaml = [
     { file = "PyYAML-6.0-cp39-cp39-win32.whl", hash = "sha256:b5b9eccad747aabaaffbc6064800670f0c297e52c12754eb1d976c57e4f74dcb" },
     { file = "PyYAML-6.0-cp39-cp39-win_amd64.whl", hash = "sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c" },
     { file = "PyYAML-6.0.tar.gz", hash = "sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2" },
+]
+redis = [
+    { file = "redis-4.4.0rc4-py3-none-any.whl", hash = "sha256:7136c511137681002bde316341eeac565eaff966544fefc7729462c2d1c87c67" },
+    { file = "redis-4.4.0rc4.tar.gz", hash = "sha256:c8654c5ab28ec0a1876c588cdac2ad4a3dd71919ee21df5fe77dfe846716247f" },
 ]
 requests = [
     { file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349" },

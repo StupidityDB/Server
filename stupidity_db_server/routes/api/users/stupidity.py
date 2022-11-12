@@ -54,7 +54,6 @@ async def get_user_stupidity(
     ),
     response_description="The users old and new stupidity rating.",
     dependencies=[
-        Depends(oauth2.requires_authentication),
         Depends(RateLimiter(times=5, minutes=1))
     ],
     status_code=status.HTTP_201_CREATED,
@@ -127,6 +126,7 @@ async def vote_for_user_stupidity(
     )
 )
 async def remove_user_stupidity_vote(
+    *,
     db: PGConnection = Depends(get_db),
     user: User = Depends(oauth2.get_user),
     target_id: int = UserId,
