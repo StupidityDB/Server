@@ -16,13 +16,13 @@ router = APIRouter(
     "/",
     summary="Link your Discord account.",
     description="Link your Discord account.",
-    status_code=status.HTTP_302_FOUND
+    status_code=status.HTTP_307_TEMPORARY_REDIRECT
 )
 async def authorize(
     *,
     oauth2_: DiscordOAuth2Client = Depends(oauth2.get_oauth2)
 ) -> RedirectResponse:
-    return RedirectResponse(oauth2_.oauth_login_url)
+    return RedirectResponse(oauth2_.oauth_login_url())
 
 
 @router.get(
@@ -33,5 +33,5 @@ async def authorize(
 async def authorize_success() -> HTMLResponse:
     return HTMLResponse(
         "<h1>Success!</h1>"
-        "<p>You can now use the API.</p>"
+        "<p>You are now authorized.</p>"
     )
