@@ -1,12 +1,9 @@
-from __future__ import annotations
-
 __all__ = ("StupidAPI",)
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from aioredis import Redis as RedisConnection
-from asyncpg import connect as connect_to_postgres
+from asyncpg import Connection as PGConnection, connect as connect_to_postgres
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
@@ -14,9 +11,6 @@ from fastapi_limiter import FastAPILimiter
 from json5 import loads as decode_json5
 
 from .routes import router as api_router
-
-if TYPE_CHECKING:
-    from asyncpg import Connection as PGConnection
 
 config = decode_json5((Path(__file__).parent / "config.json5").read_text())
 
@@ -44,8 +38,8 @@ class StupidAPI(FastAPI):
 
     async def on_start(self) -> None:
         self.db = await connect_to_postgres(
-            user=config["DB_USER"],
-            password=config["DB_PASSWORD"],
+            user="stupidity_db_user",
+            password="stupidity_db_password",
             database="StupidityDB",
             host="127.0.0.1",
         )

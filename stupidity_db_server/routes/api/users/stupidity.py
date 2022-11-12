@@ -1,17 +1,13 @@
 __all__ = ("router",)
 
-from typing import TYPE_CHECKING
-
+from asyncpg import Connection as PGConnection
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import ORJSONResponse
+from fastapi_discord import User
 from fastapi_limiter.depends import RateLimiter
 
 from stupidity_db_server.annotations import UserId
 from stupidity_db_server.depends import get_db, oauth2
-
-if TYPE_CHECKING:
-    from fastapi_discord import User
-    from asyncpg import Connection as PGConnection
 
 router = APIRouter(
     prefix="/stupidity",

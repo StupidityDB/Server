@@ -1,12 +1,7 @@
-from __future__ import annotations
-
 __all__ = ("get_oauth2",)
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
-    from fastapi import Request
+from fastapi import Request
+from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
 
 
 def get_oauth2(request: Request) -> DiscordOAuth2Client:

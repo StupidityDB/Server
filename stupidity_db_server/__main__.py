@@ -6,4 +6,4 @@ from . import StupidAPI
 
 app = StupidAPI()
 
-run_app(app, reload=True)
+run_app(app)

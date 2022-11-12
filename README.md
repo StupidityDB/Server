@@ -19,8 +19,8 @@ poetry install --only main
 Before running the server, you will need to edit the a `config.example.json5` file in
 the `stupidity_db_server` directory (Also rename it to `config.json5`.).
 
-After you have made the PostGreSQL user and database, you will need to run the SQL
-commands in the `schemas` directory to create the tables.
+After you have made the PostGreSQL user and database, you will need to run the SQL commands in
+the `schemas` directory to create the tables.
 
 ## Running
 
