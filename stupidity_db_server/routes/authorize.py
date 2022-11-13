@@ -5,6 +5,7 @@ from inspect import cleandoc
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi_discord import DiscordOAuthClient as DiscordOAuth2Client
+from fastapi_discord.exceptions import InvalidToken
 
 from ..depends import oauth2
 from ..util import generate_example
@@ -66,8 +67,22 @@ async def authorize_success(
             status_code=status.HTTP_401_UNAUTHORIZED
         )
 
-    token, refresh_token = await oauth2_.get_access_token(code)
+    try:
+        token, refresh_token = await oauth2_.get_access_token(code)
+    except InvalidToken:
+        return HTMLResponse(
+            content=cleandoc(
+                """
+                <h1>Error!</h1>
+                <p>You did not provide a valid authorization code.</p>
+                """
+            ),
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
+
+    print(token, refresh_token)
     # Now what?
+
     return HTMLResponse(
         cleandoc(
             """
