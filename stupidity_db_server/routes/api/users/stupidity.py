@@ -4,6 +4,7 @@ __all__ = ("router",)
 
 from typing import TYPE_CHECKING
 
+from asyncpg import Connection as PostgresConnection
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from fastapi_limiter.depends import RateLimiter
@@ -12,7 +13,7 @@ from ....depends import get, oauth, params
 from ....utils import generate_example, generate_examples
 
 if TYPE_CHECKING:
-    from asyncpg import Connection as PostgresConnection, Record
+    from asyncpg import Record
 
 router = APIRouter(
     tags=["Stupidity"]

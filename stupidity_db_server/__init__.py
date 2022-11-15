@@ -36,8 +36,8 @@ class StupidAPI(FastAPI):
                 self.on_start,
             ),
             on_shutdown=(
-                self.db.close,
-                self.redis.close
+                lambda: self.db.close,
+                lambda: self.redis.close
             ),
             exception_handlers={
                 Unauthorized: self.handle_unauthorized

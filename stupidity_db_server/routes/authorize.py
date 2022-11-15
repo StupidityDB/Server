@@ -5,6 +5,7 @@ __all__ = ("router",)
 from datetime import datetime as DateTime, timedelta as TimeDelta, timezone as TimeZone
 from typing import TYPE_CHECKING
 
+from asyncpg import Connection as PostgresConnection
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.responses import ORJSONResponse, RedirectResponse
 from fastapi_discord.exceptions import InvalidToken
@@ -14,7 +15,7 @@ from ..ductape import StupidOAuthClient
 from ..utils import generate_examples
 
 if TYPE_CHECKING:
-    from asyncpg import Connection as PostgresConnection, Record
+    from asyncpg import Record
 
 router = APIRouter(
     prefix="/authorize",

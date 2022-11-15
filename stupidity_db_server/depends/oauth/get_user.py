@@ -5,6 +5,7 @@ __all__ = ("get_user",)
 from datetime import datetime as DateTime, timezone as TimeZone
 from typing import TYPE_CHECKING
 
+from asyncpg import Connection as PostgresConnection
 from fastapi import Depends
 from fastapi_discord import Unauthorized
 
@@ -13,7 +14,7 @@ from .types import DiscordUser
 from .. import get
 
 if TYPE_CHECKING:
-    from asyncpg import Connection as PostgresConnection, Record
+    from asyncpg import Record
 
 
 async def get_user(
