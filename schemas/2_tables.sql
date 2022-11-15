@@ -20,6 +20,6 @@ CREATE TABLE users
 -- Latest token (not expired) with an expired token.
 CREATE TABLE token_history
 (
-    id    BIGSERIAL NOT NULL,
-    token TEXT      NOT NULL
+    token TEXT PRIMARY KEY NOT NULL,
+    id    BIGSERIAL        NOT NULL
 );
