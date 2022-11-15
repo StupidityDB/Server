@@ -21,6 +21,7 @@ router = APIRouter(
     response_description="The users average stupidity and total voted count.",
     responses=generate_example(
         {
+            "detail": "User found.",
             "average_stupidity": 36.7,
             "total_votes": 356
         }
@@ -36,11 +37,15 @@ async def get_user_stupidity(
         target_id
     )
 
+    total_votes = result["total"]
+
     return ORJSONResponse(
         {
+            "detail": "User found." if total_votes else "User not found.",
             "average_stupidity": result["average"],
-            "total_votes": result["total"]
-        }
+            "total_votes": total_votes
+        },
+        status_code=status.HTTP_200_OK if total_votes else status.HTTP_404_NOT_FOUND
     )
 
 
@@ -58,6 +63,7 @@ async def get_user_stupidity(
     status_code=status.HTTP_201_CREATED,
     responses=generate_example(
         {
+            "detail": "Successfully voted for the user's stupidity.",
             "old_rating": 69,
             "new_rating": 31
         },
@@ -96,6 +102,7 @@ async def vote_for_user_stupidity(
 
     return ORJSONResponse(
         {
+            "detail": "Successfully voted for the user's stupidity.",
             "old_rating": old_rating,
             "new_rating": rating
         }
@@ -118,6 +125,7 @@ async def vote_for_user_stupidity(
     ],
     responses=generate_example(
         {
+            "detail": "Successfully removed vote for user's stupidity.",
             "successfully_deleted": True,
             "old_rating": 31
         }
@@ -137,7 +145,10 @@ async def remove_user_stupidity_vote(
 
     return ORJSONResponse(
         {
-            "successfully_deleted": old_rating is not None,
+            "detail": "Successfully removed vote for user's stupidity."
+            if old_rating else "No vote found. Vote was not removed because it didn't exist.",
+            "successfully_deleted": bool(old_rating),
             "old_rating": old_rating
-        }
+        },
+        status_code=status.HTTP_200_OK if old_rating else status.HTTP_404_NOT_FOUND
     )
