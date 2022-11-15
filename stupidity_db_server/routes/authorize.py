@@ -152,7 +152,7 @@ async def renew_token(
             detail="The provided token is invalid."
         )
 
-    user_data: Record | None = await db.fetchrow(
+    user_data: Record = await db.fetchrow(
         """
         SELECT
             token, token_expires_at, renew_token
