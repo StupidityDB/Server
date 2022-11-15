@@ -1,4 +1,4 @@
-__all__ = ("generate_example",)
+__all__ = ("generate_example", "generate_examples")
 
 from typing import Any
 
@@ -20,4 +20,21 @@ def generate_example(
                 }
             }
         }
+    }
+
+
+def generate_examples(
+    examples: dict[int, Any],
+    /,
+    *,
+    content_type: str = "application/json"
+) -> dict[int, dict[str, dict[str, dict[str, Any]]]]:
+    return {
+        status: {
+            "content": {
+                content_type: {
+                    "examples": example
+                }
+            }
+        } for status, example in examples.items()
     }

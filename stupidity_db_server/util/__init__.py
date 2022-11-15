@@ -1,1 +1,1 @@
-from .generate_example import *
+from .generate_examples import *

@@ -7,7 +7,7 @@ from fastapi_limiter.depends import RateLimiter
 
 from ....annotations import UserId
 from ....depends import get_db, oauth2
-from ....util import generate_example
+from ....util import generate_example, generate_examples
 
 router = APIRouter(
     tags=["Stupidity"]
@@ -18,12 +18,17 @@ router = APIRouter(
     "/{user_id}/stupidity",
     summary="Get a users average stupidity.",
     description="This endpoint returns the average stupidity and total voted count of a user.",
-    response_description="The users average stupidity and total voted count.",
-    responses=generate_example(
+    response_description="The users average stupidity and total received vote count.",
+    responses=generate_examples(
         {
-            "detail": "User found.",
-            "average_stupidity": 36.7,
-            "total_votes": 356
+            status.HTTP_200_OK: {
+                "detail": "User found.",
+                "average_stupidity": 36.7,
+                "total_votes": 356
+            },
+            status.HTTP_404_NOT_FOUND: {
+                "detail": "User not found."
+            }
         }
     )
 )
@@ -130,10 +135,15 @@ async def vote_for_user_stupidity(
     dependencies=[
         Depends(RateLimiter(times=5, minutes=1))
     ],
-    responses=generate_example(
+    responses=generate_examples(
         {
-            "detail": "Successfully removed vote for user's stupidity.",
-            "old_rating": 31
+            status.HTTP_200_OK: {
+                "detail": "Successfully removed vote for user's stupidity.",
+                "old_rating": 31
+            },
+            status.HTTP_404_NOT_FOUND: {
+                "detail": "User not found."
+            }
         }
     )
 )
@@ -149,17 +159,17 @@ async def remove_user_stupidity_vote(
         target_id
     )
 
-    if not old_rating:
-        return ORJSONResponse(
-            {
-                "detail": "Vote not found."
-            },
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-    else:
+    if old_rating:
         return ORJSONResponse(
             {
                 "detail": "Successfully removed vote for user's stupidity.",
                 "old_rating": old_rating
             }
+        )
+    else:
+        return ORJSONResponse(
+            {
+                "detail": "Vote not found."
+            },
+            status_code=status.HTTP_404_NOT_FOUND
         )
