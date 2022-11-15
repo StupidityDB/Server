@@ -14,7 +14,7 @@ class TokenResponse(TypedDict):
     scope: str
 
 
-def get_tokens(response: TokenResponse) -> tuple[str, str]:
+def get_tokens(response: TokenResponse, /) -> tuple[str, str]:
     access_token, refresh_token = response.get("access_token"), response.get("refresh_token")
 
     if not any((access_token, refresh_token)):
@@ -24,7 +24,7 @@ def get_tokens(response: TokenResponse) -> tuple[str, str]:
 
 
 class StupidOAuthClient(DiscordOAuthClient):
-    async def get_access_token(self, code: str) -> tuple[str, str, int]:
+    async def get_access_token(self, code: str, /) -> tuple[str, str, int]:
         response = await self.get_token_response(
             {
                 "client_id": self.client_id,
@@ -37,7 +37,7 @@ class StupidOAuthClient(DiscordOAuthClient):
         access_token, refresh_token = get_tokens(response)
         return access_token, refresh_token, response["expires_in"]
 
-    async def refresh_access_token(self, refresh_token: str) -> tuple[str, str, int]:
+    async def refresh_access_token(self, refresh_token: str, /) -> tuple[str, str, int]:
         response = await self.get_token_response(
             {
                 "client_id": self.client_id,

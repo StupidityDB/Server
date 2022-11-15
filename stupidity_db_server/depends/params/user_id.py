@@ -6,6 +6,7 @@ from fastapi import HTTPException, Path
 
 
 def user_id(
+    *,
     target_id: int = Path(
         alias="user_id",
         description="The user's Discord ID.",
