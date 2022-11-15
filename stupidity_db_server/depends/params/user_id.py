@@ -1,9 +1,9 @@
-__all__ = ('get_user_id',)
+__all__ = ('user_id',)
 
 from fastapi import HTTPException, Path
 
 
-def get_user_id(
+def user_id(
     user_id: int = Path(
         description="The user's Discord ID.",
         example=512640455834337290
