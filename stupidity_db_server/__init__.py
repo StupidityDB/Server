@@ -7,10 +7,11 @@ from aioredis import Redis as RedisConnection
 from asyncpg import Connection as PostgresConnection, connect as connect_to_postgres
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from fastapi_discord import DiscordOAuthClient, Unauthorized
+from fastapi_discord import Unauthorized
 from fastapi_limiter import FastAPILimiter
 from json5 import loads as decode_json5
 
+from .ductape import StupidOAuthClient
 from .routes import router
 
 if TYPE_CHECKING:
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 class StupidAPI(FastAPI):
     db: PostgresConnection
     redis: RedisConnection
-    oauth: DiscordOAuthClient
+    oauth: StupidOAuthClient
 
     def __init__(self) -> None:
         super().__init__(
@@ -60,7 +61,7 @@ class StupidAPI(FastAPI):
             decode_responses=True
         )
 
-        self.oauth = DiscordOAuthClient(
+        self.oauth = StupidOAuthClient(
             client_id=config["CLIENT_ID"],
             client_secret=config["CLIENT_SECRET"],
             redirect_uri=config["REDIRECT_URI"]

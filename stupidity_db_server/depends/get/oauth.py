@@ -7,10 +7,10 @@ from fastapi import Depends
 from .app import app as get_app
 
 if TYPE_CHECKING:
-    from fastapi_discord import DiscordOAuthClient
+    from ...ductape import StupidOAuthClient
 
     from ... import StupidAPI
 
 
-def db(*, app: StupidAPI = Depends(get_app)) -> DiscordOAuthClient:
+def db(*, app: StupidAPI = Depends(get_app)) -> StupidOAuthClient:
     return app.oauth

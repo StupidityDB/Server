@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.responses import ORJSONResponse, RedirectResponse
-from fastapi_discord import DiscordOAuthClient
 from fastapi_discord.exceptions import InvalidToken
 
 from ..depends import get, oauth
+from ..ductape import StupidOAuthClient
 from ..utils import generate_examples
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ router = APIRouter(
 )
 async def authorize(
     *,
-    oauth_: DiscordOAuthClient = Depends(get.oauth)
+    oauth_: StupidOAuthClient = Depends(get.oauth)
 ) -> RedirectResponse:
     return RedirectResponse(oauth_.oauth_login_url)
 
@@ -55,7 +55,7 @@ async def authorize(
 async def authorize_callback(
     *,
     db: PostgresConnection = Depends(get.db),
-    oauth_: DiscordOAuthClient = Depends(get.oauth),
+    oauth_: StupidOAuthClient = Depends(get.oauth),
     code: str = Query(
         description="The authorization code returned by Discord.",
         example="Waf3Tvx8kdos5hta3gcJ8GndJSoBqI"
@@ -125,7 +125,7 @@ async def authorize_callback(
 async def renew_token(
     *,
     db: PostgresConnection = Depends(get.db),
-    oauth_: DiscordOAuthClient = Depends(get.oauth),
+    oauth_: StupidOAuthClient = Depends(get.oauth),
     token: str = Body(
         description="The access token.",
         example="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
