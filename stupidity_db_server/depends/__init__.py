@@ -1,4 +1,4 @@
+from stupidity_db_server.depends.get.db import *
+from stupidity_db_server.depends.get.oauth import *
+from stupidity_db_server.depends.get.redis import *
 from . import oauth, params
-from .get_db import *
-from .get_oauth import *
-from .get_redis import *

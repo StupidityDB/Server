@@ -1,8 +1,8 @@
-__all__ = ("get_redis",)
+__all__ = ("redis",)
 
 from aioredis import Redis as RedisConnection
 from fastapi import Request
 
 
-def get_redis(*, request: Request) -> RedisConnection:
+def redis(*, request: Request) -> RedisConnection:
     return request.app.redis
