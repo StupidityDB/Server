@@ -90,7 +90,8 @@ async def get_user_stupidity(
             "detail": "Successfully voted for the user's stupidity.",
             "old_rating": 69,
             "new_rating": 31
-        }, status_code=status.HTTP_201_CREATED
+        },
+        status_code=status.HTTP_201_CREATED
     )
 )
 async def vote_for_user_stupidity(

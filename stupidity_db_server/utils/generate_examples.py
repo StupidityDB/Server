@@ -33,7 +33,7 @@ def generate_examples(
         status_code: {
             "content": {
                 content_type: {
-                    "examples": example
+                    "example": example
                 }
             }
         } for status_code, example in examples.items()
