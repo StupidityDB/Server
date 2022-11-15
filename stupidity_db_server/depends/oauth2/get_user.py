@@ -30,7 +30,7 @@ async def get_user(
         token
     )
 
-    if user_raw is None or user_raw["token_expires_at"] < DateTime.now(TimeZone.utc):
+    if not user_raw or user_raw["token_expires_at"] < DateTime.now(TimeZone.utc):
         raise Unauthorized
 
     return DiscordUser(**user_raw)
