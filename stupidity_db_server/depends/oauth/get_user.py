@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("get_user",)
 
 from datetime import datetime as DateTime, timezone as TimeZone

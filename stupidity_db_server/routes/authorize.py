@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("router",)
 
 from datetime import datetime as DateTime, timedelta as TimeDelta, timezone as TimeZone

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("db",)
 
 from typing import TYPE_CHECKING

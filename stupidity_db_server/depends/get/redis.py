@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("redis",)
 
 from typing import TYPE_CHECKING
@@ -12,5 +14,5 @@ if TYPE_CHECKING:
     from ... import StupidAPI
 
 
-def db(*, app: StupidAPI = Depends(get_app)) -> RedisConnection:
+def redis(*, app: StupidAPI = Depends(get_app)) -> RedisConnection:
     return app.redis

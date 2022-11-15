@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("oauth",)
 
 from typing import TYPE_CHECKING
@@ -12,5 +14,5 @@ if TYPE_CHECKING:
     from ... import StupidAPI
 
 
-def db(*, app: StupidAPI = Depends(get_app)) -> StupidOAuthClient:
+def oauth(*, app: StupidAPI = Depends(get_app)) -> StupidOAuthClient:
     return app.oauth
