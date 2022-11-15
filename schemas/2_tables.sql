@@ -11,9 +11,9 @@ CREATE TABLE users
     username         TEXT                  NOT NULL,
     discriminator    SMALLSERIAL           NOT NULL,
     avatar_url       TEXT                  NOT NULL,
-    token            TEXT                  NOT NULL,
+    token            TEXT UNIQUE           NOT NULL,
     token_expires_at TIMESTAMP             NOT NULL,
-    renew_token      TEXT                  NOT NULL
+    renew_token      TEXT UNIQUE           NOT NULL
 );
 
 -- This is so that other clients of the same user don't get left behind. They can get the
