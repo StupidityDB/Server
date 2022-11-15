@@ -1,8 +1,16 @@
 __all__ = ("redis",)
 
-from aioredis import Redis as RedisConnection
-from fastapi import Request
+from typing import TYPE_CHECKING
+
+from fastapi import Depends
+
+from .app import app as get_app
+
+if TYPE_CHECKING:
+    from aioredis import Redis as RedisConnection
+
+    from ... import StupidAPI
 
 
-def redis(*, request: Request) -> RedisConnection:
-    return request.app.redis
+def db(*, app: StupidAPI = Depends(get_app)) -> RedisConnection:
+    return app.redis

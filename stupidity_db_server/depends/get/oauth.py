@@ -1,8 +1,16 @@
 __all__ = ("oauth",)
 
-from fastapi import Request
-from fastapi_discord import DiscordOAuthClient
+from typing import TYPE_CHECKING
+
+from fastapi import Depends
+
+from .app import app as get_app
+
+if TYPE_CHECKING:
+    from fastapi_discord import DiscordOAuthClient
+
+    from ... import StupidAPI
 
 
-def oauth(*, request: Request) -> DiscordOAuthClient:
-    return request.app.oauth2
+def db(*, app: StupidAPI = Depends(get_app)) -> DiscordOAuthClient:
+    return app.oauth
