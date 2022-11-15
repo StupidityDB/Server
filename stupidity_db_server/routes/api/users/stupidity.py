@@ -1,6 +1,6 @@
 __all__ = ("router",)
 
-from asyncpg import Connection as PGConnection
+from asyncpg import Connection as PGConnection, Record
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import ORJSONResponse
 from fastapi_limiter.depends import RateLimiter
@@ -37,7 +37,7 @@ async def get_user_stupidity(
     db: PGConnection = Depends(get_db),
     target_id: int = UserId
 ) -> ORJSONResponse:
-    result = await db.fetchrow(
+    result: Record = await db.fetchrow(
         "SELECT AVG(rating) AS average, COUNT(*) AS total FROM stupidity_table WHERE rated = $1",
         target_id
     )
@@ -95,7 +95,7 @@ async def vote_for_user_stupidity(
         le=100
     )
 ) -> ORJSONResponse:
-    old_rating = await db.fetchval(
+    old_rating: int | None = await db.fetchval(
         "SELECT rating FROM stupidity_table WHERE rater = $1 AND rated = $2",
         user.id,
         target_id
@@ -103,9 +103,14 @@ async def vote_for_user_stupidity(
 
     await db.execute(
         """
-        INSERT INTO stupidity_table (rated, rater, rating) VALUES ($1, $2, $3)
-        ON CONFLICT (rated, rater) DO UPDATE 
-            SET rating = $3
+        INSERT INTO stupidity_table 
+            (rated, rater, rating) 
+        VALUES 
+            ($1, $2, $3)
+        ON CONFLICT 
+            (rated, rater) 
+        DO UPDATE SET 
+            rating = $3
         """,
         target_id,
         user.id,
@@ -128,10 +133,7 @@ async def vote_for_user_stupidity(
         "This endpoint lets you remove a vote that you have sent to a user. "
         "It returns the old stupidity rating (Now of which is deleted.)."
     ),
-    response_description=(
-        "The users old stupidity rating. Will be None if the successfully_deleted "
-        "key is False."
-    ),
+    response_description="The users old stupidity rating.",
     dependencies=[
         Depends(RateLimiter(times=5, minutes=1))
     ],
@@ -153,7 +155,7 @@ async def remove_user_stupidity_vote(
     user: oauth2.DiscordUser = Depends(oauth2.get_user),
     target_id: int = UserId,
 ) -> ORJSONResponse:
-    old_rating = await db.execute(
+    old_rating: int = await db.fetchval(
         "DELETE FROM stupidity_table WHERE rater = $1 AND rated = $2 RETURNING rating",
         user.id,
         target_id

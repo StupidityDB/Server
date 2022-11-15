@@ -17,13 +17,20 @@ async def get_user(
     db: PGConnection = Depends(get_db),
     oauth2: DiscordOAuth2Client = Depends(get_oauth2)
 ) -> DiscordUser:
-    token = oauth2.get_token(request)
-    user: Record = await db.fetchrow(
-        "SELECT (id, username, discriminator, avatar_url, token_expires_at) FROM users WHERE token = $1",
+    token: str = oauth2.get_token(request)
+    user_raw: Record | None = await db.fetchrow(
+        """
+        SELECT 
+            (id, username, discriminator, avatar_url, token_expires_at) 
+        FROM 
+            users 
+        WHERE
+            token = $1
+        """,
         token
     )
 
-    if user is None or user["token_expires_at"] < DateTime.now(TimeZone.utc):
+    if user_raw is None or user_raw["token_expires_at"] < DateTime.now(TimeZone.utc):
         raise Unauthorized
 
-    return DiscordUser(**user)
+    return DiscordUser(**user_raw)
