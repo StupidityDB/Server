@@ -3,7 +3,6 @@ __all__ = ("router",)
 from asyncpg import Connection as PGConnection
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import ORJSONResponse
-from fastapi_discord import User
 from fastapi_limiter.depends import RateLimiter
 
 from ....annotations import UserId
@@ -32,15 +31,15 @@ async def get_user_stupidity(
     db: PGConnection = Depends(get_db),
     target_id: int = UserId
 ) -> ORJSONResponse:
-    result = await db.fetch(
-        "SELECT AVG(rating) AS average, COUNT(*) AS total FROM stupidity WHERE rated = $1",
+    result = await db.fetchrow(
+        "SELECT AVG(rating) AS average, COUNT(*) AS total FROM stupidity_table WHERE rated = $1",
         target_id
     )
 
     return ORJSONResponse(
         {
-            "average_stupidity": result[0]["average"],
-            "total_votes": result[0]["total"]
+            "average_stupidity": result["average"],
+            "total_votes": result["total"]
         }
     )
 
@@ -68,7 +67,7 @@ async def get_user_stupidity(
 async def vote_for_user_stupidity(
     *,
     db: PGConnection = Depends(get_db),
-    user: User = Depends(oauth2.get_user),
+    user: oauth2.DiscordUser = Depends(oauth2.get_user),
     target_id: int = UserId,
     rating: int = Body(
         description="The rating to rate the user's stupidity.",
@@ -79,14 +78,14 @@ async def vote_for_user_stupidity(
     )
 ) -> ORJSONResponse:
     old_rating = await db.fetchval(
-        "SELECT rating FROM stupidity WHERE rater = $1 AND rated = $2",
+        "SELECT rating FROM stupidity_table WHERE rater = $1 AND rated = $2",
         user.id,
         target_id
     )
 
     await db.execute(
         """
-        INSERT INTO stupidity (rated, rater, rating) VALUES ($1, $2, $3)
+        INSERT INTO stupidity_table (rated, rater, rating) VALUES ($1, $2, $3)
         ON CONFLICT (rated, rater) DO UPDATE 
             SET rating = $3
         """,
@@ -115,8 +114,7 @@ async def vote_for_user_stupidity(
         "key is False."
     ),
     dependencies=[
-        Depends(oauth2.requires_authentication),
-        Depends(RateLimiter(times=5, minutes=1)),
+        Depends(RateLimiter(times=5, minutes=1))
     ],
     responses=generate_example(
         {
@@ -128,11 +126,11 @@ async def vote_for_user_stupidity(
 async def remove_user_stupidity_vote(
     *,
     db: PGConnection = Depends(get_db),
-    user: User = Depends(oauth2.get_user),
+    user: oauth2.DiscordUser = Depends(oauth2.get_user),
     target_id: int = UserId,
 ) -> ORJSONResponse:
     old_rating = await db.execute(
-        "DELETE FROM stupidity WHERE rater = $1 AND rated = $2 RETURNING rating",
+        "DELETE FROM stupidity_table WHERE rater = $1 AND rated = $2 RETURNING rating",
         user.id,
         target_id
     )
