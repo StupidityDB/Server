@@ -39,14 +39,21 @@ async def get_user_stupidity(
 
     total_votes = result["total"]
 
-    return ORJSONResponse(
-        {
-            "detail": "User found." if total_votes else "User not found.",
-            "average_stupidity": result["average"],
-            "total_votes": total_votes
-        },
-        status_code=status.HTTP_200_OK if total_votes else status.HTTP_404_NOT_FOUND
-    )
+    if total_votes:
+        return ORJSONResponse(
+            {
+                "detail": "User found.",
+                "average_stupidity": round(result["average"], 1),
+                "total_votes": total_votes
+            }
+        )
+    else:
+        return ORJSONResponse(
+            {
+                "detail": "User not found."
+            },
+            status_code=status.HTTP_404_NOT_FOUND
+        )
 
 
 @router.put(
@@ -126,7 +133,6 @@ async def vote_for_user_stupidity(
     responses=generate_example(
         {
             "detail": "Successfully removed vote for user's stupidity.",
-            "successfully_deleted": True,
             "old_rating": 31
         }
     )
@@ -143,12 +149,17 @@ async def remove_user_stupidity_vote(
         target_id
     )
 
-    return ORJSONResponse(
-        {
-            "detail": "Successfully removed vote for user's stupidity."
-            if old_rating else "No vote found. Vote was not removed because it didn't exist.",
-            "successfully_deleted": bool(old_rating),
-            "old_rating": old_rating
-        },
-        status_code=status.HTTP_200_OK if old_rating else status.HTTP_404_NOT_FOUND
-    )
+    if not old_rating:
+        return ORJSONResponse(
+            {
+                "detail": "Vote not found."
+            },
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    else:
+        return ORJSONResponse(
+            {
+                "detail": "Successfully removed vote for user's stupidity.",
+                "old_rating": old_rating
+            }
+        )
