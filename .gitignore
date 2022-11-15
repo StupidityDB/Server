@@ -1,3 +1,4 @@
+start_postgres.sh
 config.json5
 __pycache__/
 *.py[cod]
@@ -80,3 +81,4 @@ dmypy.json
 .pytype/
 cython_debug/
 .idea/
+*.rdb
