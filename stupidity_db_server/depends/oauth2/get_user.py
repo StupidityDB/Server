@@ -13,17 +13,17 @@ from ..get_db import get_db
 
 async def get_user(
     *,
-    request: Request,
     db: PGConnection = Depends(get_db),
-    oauth2: DiscordOAuth2Client = Depends(get_oauth2)
+    oauth2: DiscordOAuth2Client = Depends(get_oauth2),
+    request: Request
 ) -> DiscordUser:
     token: str = oauth2.get_token(request)
     user_raw: Record | None = await db.fetchrow(
         """
-        SELECT 
-            (id, username, discriminator, avatar_url, token_expires_at) 
-        FROM 
-            users 
+        SELECT
+            (id, username, discriminator, avatar_url, token_expires_at)
+        FROM
+            users
         WHERE
             token = $1
         """,
