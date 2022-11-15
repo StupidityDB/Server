@@ -1,13 +1,16 @@
 __all__ = ("router",)
 
-from asyncpg import Connection as PGConnection, Record
-from fastapi import APIRouter, Body, Depends, status
+from typing import TYPE_CHECKING
+
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from fastapi_limiter.depends import RateLimiter
 
-from ....annotations import UserId
-from ....depends import get_db, oauth2
-from ....util import generate_example, generate_examples
+from ....depends import get, oauth, params
+from ....utils import generate_example, generate_examples
+
+if TYPE_CHECKING:
+    from asyncpg import Connection as PostgresConnection, Record
 
 router = APIRouter(
     tags=["Stupidity"]
@@ -15,7 +18,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/{user_id}/stupidity",
+    "/stupidity",
     summary="Get a users average stupidity.",
     description="This endpoint returns the average stupidity and total voted count of a user.",
     response_description="The users average stupidity and total received vote count.",
@@ -34,35 +37,41 @@ router = APIRouter(
 )
 async def get_user_stupidity(
     *,
-    db: PGConnection = Depends(get_db),
-    target_id: int = UserId
+    db: PostgresConnection = Depends(get.db),
+    target_id: int = Depends(params.user_id),
 ) -> ORJSONResponse:
     result: Record = await db.fetchrow(
-        "SELECT AVG(rating) AS average, COUNT(*) AS total FROM stupidity_table WHERE rated = $1",
+        """
+        SELECT
+            AVG(rating) AS average,
+            COUNT(*) AS total
+        FROM
+            stupidity_table
+        WHERE
+            rated = $1
+        """,
         target_id
     )
 
     total_votes = result["total"]
 
-    if total_votes:
-        return ORJSONResponse(
-            {
-                "detail": "User found.",
-                "average_stupidity": round(result["average"], 1),
-                "total_votes": total_votes
-            }
+    if not total_votes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found."
         )
-    else:
-        return ORJSONResponse(
-            {
-                "detail": "User not found."
-            },
-            status_code=status.HTTP_404_NOT_FOUND
-        )
+
+    return ORJSONResponse(
+        {
+            "detail": "User found.",
+            "average_stupidity": round(result["average"], 1),
+            "total_votes": total_votes
+        }
+    )
 
 
 @router.put(
-    "/{user_id}/stupidity",
+    "/stupidity",
     summary="Vote for a users stupidity.",
     description=(
         "This endpoint lets you vote for a users stupidity. It Returns the old stupidity "
@@ -78,15 +87,14 @@ async def get_user_stupidity(
             "detail": "Successfully voted for the user's stupidity.",
             "old_rating": 69,
             "new_rating": 31
-        },
-        status=status.HTTP_201_CREATED
+        }, status_code=status.HTTP_201_CREATED
     )
 )
 async def vote_for_user_stupidity(
     *,
-    db: PGConnection = Depends(get_db),
-    user: oauth2.DiscordUser = Depends(oauth2.get_user),
-    target_id: int = UserId,
+    db: PostgresConnection = Depends(get.db),
+    user: oauth.DiscordUser = Depends(oauth.get_user),
+    target_id: int = Depends(params.user_id),
     rating: int = Body(
         description="The rating to rate the user's stupidity.",
         example=69,
@@ -96,20 +104,28 @@ async def vote_for_user_stupidity(
     )
 ) -> ORJSONResponse:
     old_rating: int | None = await db.fetchval(
-        "SELECT rating FROM stupidity_table WHERE rater = $1 AND rated = $2",
+        """
+        SELECT
+            rating
+        FROM
+            stupidity_table
+        WHERE
+            rater = $1 AND
+            rated = $2
+        """,
         user.id,
         target_id
     )
 
     await db.execute(
         """
-        INSERT INTO stupidity_table 
-            (rated, rater, rating) 
-        VALUES 
+        INSERT INTO stupidity_table
+            (rated, rater, rating)
+        VALUES
             ($1, $2, $3)
-        ON CONFLICT 
-            (rated, rater) 
-        DO UPDATE SET 
+        ON CONFLICT
+            (rated, rater)
+        DO UPDATE SET
             rating = $3
         """,
         target_id,
@@ -127,7 +143,7 @@ async def vote_for_user_stupidity(
 
 
 @router.delete(
-    "/{user_id}/stupidity",
+    "/stupidity",
     summary="Remove a user stupidity vote.",
     description=(
         "This endpoint lets you remove a vote that you have sent to a user. "
@@ -151,27 +167,33 @@ async def vote_for_user_stupidity(
 )
 async def remove_user_stupidity_vote(
     *,
-    db: PGConnection = Depends(get_db),
-    user: oauth2.DiscordUser = Depends(oauth2.get_user),
-    target_id: int = UserId,
+    db: PostgresConnection = Depends(get.db),
+    user: oauth.DiscordUser = Depends(oauth.get_user),
+    target_id: int = Depends(params.user_id)
 ) -> ORJSONResponse:
     old_rating: int = await db.fetchval(
-        "DELETE FROM stupidity_table WHERE rater = $1 AND rated = $2 RETURNING rating",
+        """
+        DELETE FROM
+            stupidity_table
+        WHERE
+            rater = $1 AND
+            rated = $2
+        RETURNING
+            rating
+        """,
         user.id,
         target_id
     )
 
-    if old_rating:
-        return ORJSONResponse(
-            {
-                "detail": "Successfully removed vote for user's stupidity.",
-                "old_rating": old_rating
-            }
+    if not old_rating:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Vote not found."
         )
-    else:
-        return ORJSONResponse(
-            {
-                "detail": "Vote not found."
-            },
-            status_code=status.HTTP_404_NOT_FOUND
-        )
+
+    return ORJSONResponse(
+        {
+            "detail": "Successfully removed vote for user's stupidity.",
+            "old_rating": old_rating
+        }
+    )

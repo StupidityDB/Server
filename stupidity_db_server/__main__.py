@@ -5,5 +5,5 @@ from uvicorn import run as run_app
 from . import StupidAPI
 
 
-def __main__() -> None:
+def main() -> None:
     run_app(StupidAPI())

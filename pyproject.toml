@@ -17,7 +17,7 @@ json5 = "*"
 pyright = "*"
 
 [tool.poetry.scripts]
-server = "stupidity_db_server.__main__:__main__"
+server = "stupidity_db_server.__main__:main"
 
 [tool.pyright]
 pythonVersion = "3.10"

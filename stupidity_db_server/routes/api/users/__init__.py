@@ -5,7 +5,8 @@ from fastapi import APIRouter
 from . import reviews, stupidity
 
 router = APIRouter(
-    prefix="/users"
+    prefix="/users/{user_id}",
 )
+
 router.include_router(reviews.router)
 router.include_router(stupidity.router)

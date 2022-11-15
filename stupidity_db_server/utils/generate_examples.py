@@ -9,11 +9,11 @@ def generate_example(
     example: Any,
     /,
     *,
-    status: int = http_status.HTTP_200_OK,
+    status_code: int = http_status.HTTP_200_OK,
     content_type: str = "application/json"
 ) -> dict[int, dict[str, dict[str, dict[str, Any]]]]:
     return {
-        status: {
+        status_code: {
             "content": {
                 content_type: {
                     "example": example
@@ -30,11 +30,11 @@ def generate_examples(
     content_type: str = "application/json"
 ) -> dict[int, dict[str, dict[str, dict[str, Any]]]]:
     return {
-        status: {
+        status_code: {
             "content": {
                 content_type: {
                     "examples": example
                 }
             }
-        } for status, example in examples.items()
+        } for status_code, example in examples.items()
     }
