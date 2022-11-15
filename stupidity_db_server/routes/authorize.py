@@ -44,7 +44,7 @@ async def authorize(
             <p>You are have authorized StupidityDB successfully.</p>
             """
         ),
-        html=True
+        content_type="text/html"
     )
 )
 async def authorize_success(
