@@ -24,6 +24,9 @@ def get_tokens(response: TokenResponse, /) -> tuple[str, str]:
 
 
 class StupidOAuthClient(DiscordOAuthClient):
+    async def get_user_raw(self, access_token: str, /) -> dict:
+        return await self.request("/users/@me", access_token)
+
     async def get_access_token(self, code: str, /) -> tuple[str, str, int]:
         response = await self.get_token_response(
             {

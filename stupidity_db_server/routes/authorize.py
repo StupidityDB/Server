@@ -34,9 +34,9 @@ router = APIRouter(
 )
 async def authorize(
     *,
-    oauth_: StupidOAuthClient = Depends(get.oauth)
+    auth: StupidOAuthClient = Depends(get.oauth)
 ) -> RedirectResponse:
-    return RedirectResponse(oauth_.oauth_login_url)
+    return RedirectResponse(auth.oauth_login_url)
 
 
 @router.get(
@@ -59,14 +59,14 @@ async def authorize(
 async def authorize_callback(
     *,
     db: PostgresConnection = Depends(get.db),
-    oauth_: StupidOAuthClient = Depends(get.oauth),
+    auth: StupidOAuthClient = Depends(get.oauth),
     code: str = Query(
         description="The authorization code returned by Discord.",
         example="Waf3Tvx8kdos5hta3gcJ8GndJSoBqI"
     )
 ) -> ORJSONResponse:
     try:
-        access_token, renew_token, expires_in = await oauth_.get_access_token(code)
+        access_token, renew_token, expires_in = await auth.get_access_token(code)
 
     except InvalidToken:
         raise HTTPException(
@@ -74,7 +74,7 @@ async def authorize_callback(
             detail="The provided authorization code is invalid."
         )
 
-    user = oauth.DiscordUser(**await oauth_.request("/users/@me", token=access_token))
+    user = oauth.DiscordUser(**await auth.get_user_raw(access_token))
 
     await await_parallel(
         db.execute(
@@ -141,7 +141,7 @@ async def authorize_callback(
 async def renew_token(
     *,
     db: PostgresConnection = Depends(get.db),
-    oauth_: StupidOAuthClient = Depends(get.oauth),
+    auth: StupidOAuthClient = Depends(get.oauth),
     token: str = Body(
         description="The access token.",
         example="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -187,7 +187,7 @@ async def renew_token(
             }
         )
 
-    access_token, renew_token, expires_in = await oauth_.refresh_access_token(
+    access_token, renew_token, expires_in = await auth.refresh_access_token(
         user_data["renew_token"]
     )
 
