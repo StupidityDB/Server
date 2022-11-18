@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ("router",)
 
+from asyncio import gather as await_parallel
 from datetime import datetime as DateTime, timedelta as TimeDelta, timezone as TimeZone
 from typing import TYPE_CHECKING
 
@@ -65,7 +66,7 @@ async def authorize_callback(
     )
 ) -> ORJSONResponse:
     try:
-        token, renew_token, expires_in = await oauth_.get_access_token(code)
+        access_token, renew_token, expires_in = await oauth_.get_access_token(code)
 
     except InvalidToken:
         raise HTTPException(
@@ -73,37 +74,49 @@ async def authorize_callback(
             detail="The provided authorization code is invalid."
         )
 
-    user = oauth.DiscordUser(**await oauth_.request("/users/@me", token=token))
+    user = oauth.DiscordUser(**await oauth_.request("/users/@me", token=access_token))
 
-    await db.execute(
-        """
-        INSERT INTO users
-            (id, username, discriminator, avatar_url, token, token_expires_at, renew_token)
-        VALUES
-            ($1, $2, $3, $4, $5, $6, $7)
-        ON CONFLICT
-            (id)
-        DO UPDATE SET
-            username = $2,
-            discriminator = $3,
-            avatar_url = $4,
-            token = $5,
-            token_expires_at = $6,
-            renew_token = $7
-        """,
-        user.id,
-        user.username,
-        user.discriminator,
-        user.avatar_url,
-        token,
-        DateTime.now(TimeZone.utc) + TimeDelta(seconds=expires_in),
-        renew_token
+    await await_parallel(
+        db.execute(
+            """
+            INSERT INTO users
+                (id, username, discriminator, avatar_url, token, token_expires_at, renew_token)
+            VALUES
+                ($1, $2, $3, $4, $5, $6, $7)
+            ON CONFLICT
+                (id)
+            DO UPDATE SET
+                username = $2,
+                discriminator = $3,
+                avatar_url = $4,
+                token = $5,
+                token_expires_at = $6,
+                renew_token = $7
+            """,
+            user.id,
+            user.username,
+            user.discriminator,
+            user.avatar_url,
+            access_token,
+            DateTime.now(TimeZone.utc) + TimeDelta(seconds=expires_in),
+            renew_token
+        ),
+        db.execute(
+            """
+            INSERT INTO token_history
+                (token, id)
+            VALUES
+                ($1, $2)
+            """,
+            access_token,
+            user.id
+        )
     )
 
     return ORJSONResponse(
         {
             "detail": "Successful.",
-            "token": token
+            "token": access_token
         }
     )
 
@@ -178,21 +191,33 @@ async def renew_token(
         user_data["renew_token"]
     )
 
-    await db.execute(
-        """
-        UPDATE
-            users
-        SET
-            token = $1,
-            token_expires_at = $2,
-            renew_token = $3
-        WHERE
-            id = $4
-        """,
-        access_token,
-        DateTime.now(TimeZone.utc) + TimeDelta(seconds=expires_in),
-        renew_token,
-        user_id
+    await await_parallel(
+        db.execute(
+            """
+            UPDATE
+                users
+            SET
+                token = $1,
+                token_expires_at = $2,
+                renew_token = $3
+            WHERE
+                id = $4
+            """,
+            access_token,
+            DateTime.now(TimeZone.utc) + TimeDelta(seconds=expires_in),
+            renew_token,
+            user_id
+        ),
+        db.execute(
+            """
+            INSERT INTO token_history
+                (token, id)
+            VALUES
+                ($1, $2)
+            """,
+            user_data["token"],
+            user_id
+        )
     )
 
     return ORJSONResponse(
