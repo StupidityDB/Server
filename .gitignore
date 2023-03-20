@@ -1,3 +1,18 @@
 *
 
+!cache/
+
+!config/
+
+!database/
+
+!routes/
+!routes/stupiditydb/
+!routes/reviewdb/
+
+!go.mod
+!go.sum
+
+!*.example.*
+!*.go
 !*.md
