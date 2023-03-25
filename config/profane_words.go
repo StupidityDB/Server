@@ -21,6 +21,7 @@ func init() {
 	if err = json.NewDecoder(file).Decode(&profaneWords); err != nil {
 		log.Fatal(err)
 	}
+	_ = file.Close()
 
 	ProfanityDetector = goaway.NewProfanityDetector().WithCustomDictionary(profaneWords, nil, nil)
 }

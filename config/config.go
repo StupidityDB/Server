@@ -29,6 +29,5 @@ func init() {
 	if err = json.NewDecoder(file).Decode(&Config); err != nil {
 		log.Fatal(err)
 	}
-
 	_ = file.Close()
 }
