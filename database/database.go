@@ -18,25 +18,6 @@ import (
 
 var DB *bun.DB
 
-func hash(s string) string {
-	checksum := sha256.Sum256([]byte(s))
-	return hex.EncodeToString(checksum[:])
-}
-
-func GetDiscordIDWithAuthToken(authToken string) (*snowflake.ID, error) {
-	var user *User
-
-	if err := DB.NewSelect().
-		Column("DiscordID").
-		Where("AuthToken = ?", hash(authToken)).
-		Model(user).
-		Scan(context.Background()); err != nil {
-		return nil, err
-	}
-
-	return &user.DiscordID, nil
-}
-
 func init() {
 	Config := config.Config.DB
 
@@ -59,4 +40,23 @@ func init() {
 	if err := createSchemas(); err != nil {
 		log.Fatalf("Failed to create schemas: %v", err)
 	}
+}
+
+func hash(s string) string {
+	checksum := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(checksum[:])
+}
+
+func GetDiscordIDWithAuthToken(authToken string) (*snowflake.ID, error) {
+	var user *User
+
+	if err := DB.NewSelect().
+		Column("DiscordID").
+		Where("AuthToken = ?", hash(authToken)).
+		Model(user).
+		Scan(context.Background()); err != nil {
+		return nil, err
+	}
+
+	return &user.DiscordID, nil
 }
