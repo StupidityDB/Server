@@ -9,6 +9,7 @@ require (
 	github.com/uptrace/bun/dialect/pgdialect v1.1.12
 	github.com/uptrace/bun/driver/pgdriver v1.1.12
 	github.com/disgoorg/disgo v0.15.2
+	github.com/go-chi/chi v1.5.4
 )
 
 require (
