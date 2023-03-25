@@ -11,7 +11,7 @@ import (
 	"server-go/database"
 )
 
-func GetStupidity(userID int64) (stupidity *int8, err error) {
+func getStupidity(userID int64) (stupidity *int8, err error) {
 	// Check if user has votes on their profile.
 	hasVotesOnProfile, err := database.DB.NewSelect().
 		Where("RatedDiscordID = ?", userID).
@@ -50,7 +50,7 @@ func GetStupidity(userID int64) (stupidity *int8, err error) {
 	return &averageStupidityInt, nil
 }
 
-func VoteStupidity(vote *database.StupidityVote) (response *string, err error) {
+func voteStupidity(vote *database.StupidityVote) (response *string, err error) {
 	if vote.Rating > 10 {
 		return nil, errors.New("stupidity must be between 0 and 10")
 	}
