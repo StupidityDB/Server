@@ -7,26 +7,21 @@ import (
 )
 
 type dbConfig struct {
-	IP       string `json:"ip"`
-	User     string `json:"user"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-}
-
-type clientConfig struct {
-	ID     string `json:"id"`
-	Secret string `json:"secret"`
+	IP       string `json:"IP"`
+	User     string `json:"User"`
+	Name     string `json:"Name"`
+	Password string `json:"Password"`
 }
 
 type config struct {
-	DB     *dbConfig     `json:"db"`
-	Client *clientConfig `json:"client"`
+	DB   *dbConfig `json:"DB"`
+	Port string    `json:"Port"`
 }
 
 var Config *config
 
 func init() {
-	file, err := os.Open("config.json")
+	file, err := os.Open("Config.json")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -38,7 +38,7 @@ func init() {
 	DB.SetMaxIdleConns(maxOpenConns)
 
 	if err := createSchemas(); err != nil {
-		log.Fatalf("Failed to create schemas: %v", err)
+		log.Fatal(err)
 	}
 }
 

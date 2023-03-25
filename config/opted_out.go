@@ -11,7 +11,7 @@ import (
 var OptedOut []snowflake.ID
 
 func init() {
-	file, err := os.Open("optedOut.json")
+	file, err := os.Open("OptedOut.json")
 	if err != nil {
 		log.Fatal(err)
 	}
