@@ -4,139 +4,94 @@ import (
 	"context"
 	"time"
 
+	"github.com/disgoorg/snowflake/v2"
 	"github.com/uptrace/bun"
 )
 
-// TODO: Cleanup.
-
-/* Shared stuff. */
-
-type User struct {
-	bun.BaseModel `bun:"table:users"`
-
-	ID        uint64 `bun:"id, pk"`
-	AuthToken string `bun:"auth_token"`
-}
-
-type BadgeType uint8
+type UserType int8
 
 const (
-	BadgeNormal BadgeType = iota
-	BadgeStaff
+	UserBanned = iota - 1
+	UserNormal
+	UserAdmin
 )
 
-type Badge struct {
-	bun.BaseModel `bun:"table:badges"`
+type CModFlags uint8
 
-	OwnerID uint64 `bun:"owner_id" json:"-"`
+const (
+	CModAliucord CModFlags = 1 << iota
+	CModBetterDiscord
+	CModPowercordV2
+	CModReplugged
+	CModEnmity
+	CModVencord
+	CModVendetta
+)
 
-	Type BadgeType `bun:"badge_type" json:"type"`
+type BadgeFlags uint8
 
-	Icon        string `bun:"badge_icon" json:"icon"`
-	Name        string `bun:"badge_name" json:"name"`
-	Description string `bun:"badge_description" json:"description"`
-	RedirectURL string `bun:"redirect_url" json:"redirect_url"`
+const (
+	BadgeDeveloper BadgeFlags = 1 << iota
+	BadgeDonator
+	BadgeINSANE
+	BadgeUwU
+)
+
+type User struct {
+	bun.BaseModel `bun:"table:Users"`
+
+	DiscordID       snowflake.ID `bun:"DiscordID, pk"`
+	Username        string       `bun:"Username"`
+	ProfilePhotoURL string       `bun:"ProfilePhotoURL"`
+
+	Type       UserType   `bun:"Type"`
+	ClientMods CModFlags  `bun:"ClientModFlags"`
+	Badges     BadgeFlags `bun:"BadgeFlags"`
+
+	AuthToken string `bun:"AuthToken"`
 }
 
-/* StupidityDB stuff. */
+/* StupidityDB */
 
 type StupidityVote struct {
-	bun.BaseModel `bun:"table:stupidity_votes"`
+	bun.BaseModel `bun:"table:StupidityVotes"`
 
-	RaterID uint64 `bun:"rater_id"`
-	Rating  uint8  `bun:"rating"`
+	RaterDiscordID snowflake.ID `bun:"RaterDiscordID"`
+	// Minimum 0, maximum 100.
+	Rating uint8 `bun:"Rating"`
 
-	RatedID uint64 `bun:"rated_id"`
+	RatedDiscordID snowflake.ID `bun:"RatedDiscordID"`
 }
 
-/* ReviewDB stuff. */
+/* ReviewDB */
 
 type ReviewType uint8
 
 const (
-	ReviewNormal ReviewType = iota
+	ReviewToUser ReviewType = iota
+	ReviewToServer
+	ReviewPlsDonate
 	ReviewSystem
 )
 
 type Review struct {
-	bun.BaseModel `bun:"table:reviews"`
+	bun.BaseModel `bun:"table:Reviews"`
 
-	// ID of the review.
-	ID        uint32     `bun:"id, pk, autoincrement" json:"id"`
-	Type      ReviewType `bun:"type" json:"type"`
-	Stars     uint32     `bun:"stars" json:"stars"`
-	Content   string     `bun:"content" json:"content"`
-	Timestamp time.Time  `bun:"timestamp, default:current_timestamp" json:"timestamp"`
+	ID        uint32     `bun:"ID, pk, autoincrement"`
+	Type      ReviewType `bun:"Type"`
+	Stars     uint32     `bun:"Stars"`
+	Content   string     `bun:"Content"`
+	Timestamp time.Time  `bun:"Timestamp, default:current_timestamp"`
 
-	ReviewerID uint64 `bun:"reviewer_id" json:"reviewer_id"`
-	ReviewedID uint64 `bun:"reviewed_id" json:"-"`
-}
-
-type UserReviewsUser struct {
-	bun.BaseModel `bun:"table:ur_users"`
-
-	ID           int32       `bun:"id,pk,autoincrement" json:"ID"`
-	DiscordID    string      `bun:"discordid,type:numeric" json:"discordID"`
-	Token        string      `bun:"token" json:"-"`
-	Username     string      `bun:"username" json:"username"`
-	UserType     int32       `bun:"column:type" json:"-"`
-	ProfilePhoto string      `bun:"profile_photo" json:"profilePhoto"`
-	ClientMod    string      `bun:"client_mod" json:"clientMod"`
-	WarningCount int32       `bun:"warning_count" json:"warningCount"`
-	BanEndDate   time.Time   `bun:"ban_end_date" json:"banEndDate"`
-	Badges       []UserBadge `bun:"-" json:"badges"`
-}
-
-type AdminUser struct {
-	bun.BaseModel `bun:"table:ur_users"`
-	DiscordID     string `bun:"discordid,type:numeric"`
-	ProfilePhoto  string `bun:"profile_photo"`
-}
-
-type ReviewReport struct {
-	bun.BaseModel `bun:"table:ur_reports"`
-
-	ID         int32 `bun:"id,pk,autoincrement"`
-	UserID     int32 `bun:"userid"`
-	ReviewID   int32 `bun:"reviewid"`
-	ReporterID int32 `bun:"reporterid"`
-}
-
-type UserBadgeLegacy struct {
-	bun.BaseModel `bun:"table:userbadges"`
-
-	ID               int32  `bun:"id,pk,autoincrement" json:"-"`
-	DiscordID        string `bun:"discordid,type:numeric" json:"-"`
-	BadgeName        string `bun:"badge_name" json:"badge_name"`
-	BadgeIcon        string `bun:"badge_icon" json:"badge_icon"`
-	RedirectURL      string `bun:"redirect_url" json:"redirect_url"`
-	BadgeType        int32  `bun:"badge_type" json:"badge_type"`
-	BadgeDescription string `bun:"badge_description" json:"badge_description"`
-}
-
-type ActionLog struct {
-	bun.BaseModel `bun:"table:actionlog"`
-
-	Action string `bun:"action" json:"action"`
-
-	ReviewID     int32  `bun:"id,pk,autoincrement" json:"id"`
-	UserID       int64  `bun:"userid,type:numeric" json:"-"`
-	SenderUserID int32  `bun:"senderuserid" json:"senderuserid"`
-	Comment      string `bun:"comment" json:"comment"`
-
-	UpdatedString string `bun:"updatedstring"`
-	ActionUserID  int32  `bun:"actionuserid"`
+	ReviewerDiscordID snowflake.ID `bun:"ReviewerDiscordID"`
+	ReviewedDiscordID snowflake.ID `bun:"ReviewedDiscordID"`
 }
 
 func createSchemas() error {
 	models := []any{
-		(*StupitStat)(nil),
-		(*UserInfo)(nil),
-		(*UserReview)(nil),
-		(*UserReviewsUser)(nil),
-		(*ReviewReport)(nil),
-		(*UserBadgeLegacy)(nil),
-		(*ActionLog)(nil),
+		(*User)(nil),
+		(*StupidityVote)(nil),
+		(*Review)(nil),
 	}
 
 	for _, model := range models {

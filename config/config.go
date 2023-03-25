@@ -19,8 +19,8 @@ type clientConfig struct {
 }
 
 type config struct {
-	DBConfig     *dbConfig     `json:"db"`
-	ClientConfig *clientConfig `json:"client"`
+	DB     *dbConfig     `json:"db"`
+	Client *clientConfig `json:"client"`
 }
 
 var Config *config

@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
+	"github.com/disgoorg/snowflake/v2"
 )
 
-var OptedOut = []uint64{}
+var OptedOut []snowflake.ID
 
 func init() {
 	file, err := os.Open("optedOut.json")

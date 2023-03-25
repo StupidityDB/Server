@@ -15,7 +15,7 @@ import (
 var DB *bun.DB
 
 func init() {
-	Config := config.Config.DBConfig
+	Config := config.Config.DB
 
 	DB = bun.NewDB(
 		sql.OpenDB(

@@ -6,9 +6,9 @@
 
 !database/
 
-!routes/
-!routes/stupiditydb/
-!routes/reviewdb/
+!reviewdb/
+
+!stupiditydb/
 
 !go.mod
 !go.sum
