@@ -52,7 +52,7 @@ func GetDiscordIDWithAuthToken(authToken string) (*snowflake.ID, error) {
 
 	if err := DB.NewSelect().
 		Column("DiscordID").
-		Where("AuthToken = ?", hash(authToken)).
+		Where("AuthTokenHash = ?", hash(authToken)).
 		Model(user).
 		Scan(context.Background()); err != nil {
 		return nil, err

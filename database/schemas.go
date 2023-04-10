@@ -48,7 +48,7 @@ type User struct {
 	ClientMods CModFlags  `bun:"ClientModFlags"`
 	Badges     BadgeFlags `bun:"BadgeFlags"`
 
-	AuthToken string `bun:"AuthToken"`
+	AuthTokenHash string `bun:"AuthTokenHash"`
 }
 
 /* StupidityDB */
@@ -68,8 +68,8 @@ type StupidityVote struct {
 type ReviewType uint8
 
 const (
-	ReviewToUser ReviewType = iota
-	ReviewToServer
+	ReviewOnUser ReviewType = iota
+	ReviewOnServer
 	ReviewPlsDonate
 	ReviewSystem
 )
