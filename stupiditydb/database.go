@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/RGBCube/GoNew"
 	"github.com/disgoorg/log"
 	"golang.org/x/exp/slices"
 
@@ -46,8 +47,7 @@ func getStupidity(userID int64) (stupidity *int8, err error) {
 		return nil, errors.New("an error occurred while getting the average stupidity")
 	}
 
-	averageStupidityInt := int8(*averageStupidity)
-	return &averageStupidityInt, nil
+	return ptr.New(int8(*averageStupidity)), nil
 }
 
 func voteStupidity(vote *database.StupidityVote) (response *string, err error) {
@@ -76,8 +76,7 @@ func voteStupidity(vote *database.StupidityVote) (response *string, err error) {
 
 	// Vote was updated as a row was affected.
 	if rowsAffected != 0 {
-		resp := "updated your vote"
-		return &resp, nil
+		return ptr.New("updated your vote"), nil
 	}
 
 	if _, err = database.DB.NewInsert().Model(vote).Exec(context.Background()); err != nil {
@@ -85,6 +84,5 @@ func voteStupidity(vote *database.StupidityVote) (response *string, err error) {
 		return nil, errors.New("an error occured while adding the vote to the database")
 	}
 
-	resp := "successfully voted"
-	return &resp, nil
+	return ptr.New("successfully voted"), nil
 }

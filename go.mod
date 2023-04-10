@@ -3,15 +3,16 @@ module server-go
 go 1.20
 
 require (
-	github.com/TwiN/go-away v1.6.10
-	github.com/disgoorg/log v1.2.0
-	github.com/disgoorg/snowflake/v2 v2.0.1
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/cors v1.1.1
-	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/uptrace/bun v1.1.12
 	github.com/uptrace/bun/dialect/pgdialect v1.1.12
 	github.com/uptrace/bun/driver/pgdriver v1.1.12
+	github.com/disgoorg/log v1.2.0
+	github.com/disgoorg/snowflake/v2 v2.0.1
+	github.com/TwiN/go-away v1.6.10
+	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/RGBCube/GoNew v1.1.0
 	golang.org/x/exp v0.0.0-20220325121720-054d8573a5d8
 )
 
