@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/cors"
 
 	"server-go/config"
+	"server-go/reviewdb"
+	"server-go/stupiditydb"
 )
 
 func main() {
@@ -22,6 +24,9 @@ func main() {
 			},
 		),
 	)
+
+	reviewdb.RegisterRoutes(root)
+	stupiditydb.RegisterRoutes(root)
 
 	if err := http.ListenAndServe(":"+config.Config.Port, root); err != nil &&
 		!errors.Is(err, http.ErrServerClosed) {
