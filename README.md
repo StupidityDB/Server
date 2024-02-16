@@ -1,3 +1,5 @@
+# This repo is outdated and not used for server, tho if you want to read the incomplete less awful code you can peek into it.
+
 # The StupidityDB Server
 
 This is the server for the StupidityDB project. It includes StupidityDB and ReviewDB.
